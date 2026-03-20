@@ -22,7 +22,7 @@ async function signupuser(req:Request,res:Response){
             return res.status(400).json({message:"something went wrong"});
         }
         const {username,email,password}=parsed.data;
-        const hashedPass= passwordhash.hashpass(password);
+        const hashedPass= await passwordhash.hashpass(password);
         const newuser = await prisma.user.create({
             data:{
                 username,
