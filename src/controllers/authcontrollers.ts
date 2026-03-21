@@ -32,7 +32,7 @@ async function signupuser(req:Request,res:Response){
             }
         });
         const token = jwttoken.createToken(newuser.id)
-        return res.status(200).json({token});
+        return res.status(200).cookie("authtoken",token);
         
     }catch(err){
         console.error(err);
@@ -66,7 +66,7 @@ async function signinuser(req:Request,res:Response){
             return res.status(400).json({message:"incorrect credentials"});
         }
         const token = jwttoken.createToken(user.id);
-        return res.status(200).json({token:token});
+        return res.status(200).cookie("authtoken",token);
     } catch (error) {
         console.error(error);
         res.status(500).json({message:"something went wrong"});
