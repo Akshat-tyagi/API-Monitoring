@@ -19,7 +19,8 @@ async function signupuser(req:Request,res:Response){
     const parsed = signupuserSchema.safeParse(req.body);
     try{
         if(!parsed.success){
-            return res.status(400).json({message:"something went wrong"});
+            res.status(400).json({message:"something went wrong"});
+            return;
         }
         const {username,email,password}=parsed.data;
         const hashedPass= await passwordhash.hashpass(password);
@@ -38,4 +39,38 @@ async function signupuser(req:Request,res:Response){
         res.status(500).json({ message:"something went wrong"});
     }
 }
-export default {signupuser};
+
+const signinschema = z.object({
+    email:z.string().email(),
+    password:z.string().min(8,"password should be atleast 8 characters long")
+});
+
+async function signinuser(req:Request,res:Response){
+    const parsed = signinschema.safeParse(req.body);
+    if(!parsed.success){
+        return res.status(500).json({message:"something went wrong"});
+    }
+    try {
+        const {email,password}= parsed.data;
+        const user = await prisma.user.findUnique({
+            where:{
+                email
+            }
+        });
+        if(!user){
+            return res.status(400).json({message:"user does not exist"});
+        };
+        const hashedpass = user.password;
+        const matchpass = await passwordhash.matchhash(password,hashedpass);
+        if(!matchpass){
+            return res.status(400).json({message:"incorrect credentials"});
+        }
+        const token = jwttoken.createToken(user.id);
+        return res.status(200).json({token:token});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message:"something went wrong"});
+    }
+}
+
+export default {signupuser,signinuser};
