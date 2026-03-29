@@ -1,4 +1,3 @@
-import type { JwtPayload } from "jsonwebtoken";
 import jwttoken from "../utils/jwttoken.js";
 import type { NextFunction, Request, Response } from "express";
 
@@ -9,11 +8,11 @@ function auth(req: Request, res: Response, next: NextFunction) {
     if (!token) {
       return res.status(401).json({ message: "No token provided" });
     }
-    const verify = jwttoken.verifyToken(token) as JwtPayload;
-    if (!verify) {
+    const userId = jwttoken.verifyToken(token) as number | undefined;
+    if (userId == null || typeof userId !== "number") {
       return res.status(401).json({ message: "Invalid token" });
     }
-    req.userId = verify.userId;
+    req.userId = userId;
     next();
   } catch (error) {
     console.error(error);

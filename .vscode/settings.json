@@ -1,0 +1,13 @@
+{
+    "javascript.suggest.enabled": true,
+    "typescript.suggest.enabled": true,
+    "typescript.suggest.completeJSDocs": false,
+    "javascript.suggest.completeJSDocs": false,
+    "editor.inlineSuggest.enabled": false,
+    "editor.inlineSuggest.syntaxHighlightingEnabled": false,
+    "editor.screenReaderAnnounceInlineSuggestion": false,
+    "css.completion.triggerPropertyValueCompletion": false,
+    "less.completion.triggerPropertyValueCompletion": false,
+    "scss.completion.triggerPropertyValueCompletion": false,
+    "cursor.terminal.enableAiChecks": false
+}

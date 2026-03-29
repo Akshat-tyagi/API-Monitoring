@@ -19,8 +19,7 @@ async function signupuser(req:Request,res:Response){
     const parsed = signupuserSchema.safeParse(req.body);
     try{
         if(!parsed.success){
-            res.status(400).json({message:"something went wrong"});
-            return;
+            return res.status(400).json({ message: "invalid request" });
         }
         const {username,email,password}=parsed.data;
         const hashedPass= await passwordhash.hashpass(password);
@@ -31,11 +30,21 @@ async function signupuser(req:Request,res:Response){
                 password:hashedPass
             }
         });
-        const token = jwttoken.createToken(newuser.id)
-        return res.status(200).cookie("authtoken",token);
-        
+        const token = jwttoken.createToken(newuser.id);
+        return res
+            .status(201)
+            .cookie("authtoken", token, { httpOnly: true, sameSite: "lax", path: "/" })
+            .json({ message: "signed up successfully", userId: newuser.id });
     }catch(err){
         console.error(err);
+        if (
+            typeof err === "object" &&
+            err !== null &&
+            "code" in err &&
+            (err as { code?: string }).code === "P2002"
+        ) {
+            return res.status(409).json({ message: "username or email already taken" });
+        }
         res.status(500).json({ message:"something went wrong"});
     }
 }
@@ -48,7 +57,7 @@ const signinschema = z.object({
 async function signinuser(req:Request,res:Response){
     const parsed = signinschema.safeParse(req.body);
     if(!parsed.success){
-        return res.status(500).json({message:"something went wrong"});
+        return res.status(400).json({ message: "invalid request" });
     }
     try {
         const {email,password}= parsed.data;
@@ -66,7 +75,10 @@ async function signinuser(req:Request,res:Response){
             return res.status(400).json({message:"incorrect credentials"});
         }
         const token = jwttoken.createToken(user.id);
-        return res.status(200).cookie("authtoken",token);
+        return res
+            .status(200)
+            .cookie("authtoken", token, { httpOnly: true, sameSite: "lax", path: "/" })
+            .json({ message: "signed in successfully", userId: user.id });
     } catch (error) {
         console.error(error);
         res.status(500).json({message:"something went wrong"});
