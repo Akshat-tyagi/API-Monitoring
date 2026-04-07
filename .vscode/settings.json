@@ -9,5 +9,6 @@
     "css.completion.triggerPropertyValueCompletion": false,
     "less.completion.triggerPropertyValueCompletion": false,
     "scss.completion.triggerPropertyValueCompletion": false,
-    "cursor.terminal.enableAiChecks": false
+    "cursor.terminal.enableAiChecks": false,
+    "postman.settings.dotenv-detection-notification-visibility": false
 }

@@ -1,6 +1,7 @@
 import * as z from "zod";
 import type { Request, Response } from "express";
 import prisma from "../db/prisma.js"
+import monitorQueue from "../queue/monitor.queue.js";
 
 const createmonitorschema = z.object({
     name:z.string().min(4,"should be atleast 4 characters"),
@@ -25,6 +26,17 @@ async function createmonitor(req:Request,res:Response){
                 userId:req.userId
             }
         });
+        //adding job to the monitor queue
+        await monitorQueue.add(
+            "ping",
+            {monitorId:newmonitor.id,url:newmonitor.url},
+            {
+                repeat:{
+                    every:newmonitor.interval * 1000
+                },
+                removeOnComplete:true,
+            }
+        );
         return res.status(201).json({message:"monitor created",data:newmonitor});
     } catch (error) {
         if (
@@ -75,6 +87,9 @@ async function deletemonitor(req:Request, res:Response){
         if(deletemonitor.count===0){
             return res.status(404).json({message:"monitor not found"});
         };
+        //remove from queue using the ID
+        await monitorQueue.removeRepeatableByKey(`ping#${id}`);
+
         return res.status(200).json({message:"monitor deleted successfully"});
     } catch (error) {
         return res.status(500).json({message:"something went wrong"});

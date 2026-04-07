@@ -1,5 +1,4 @@
 import {Redis} from "ioredis";
-import { error } from "node:console";
 
 const redis = new Redis(process.env.REDIS_URL!);
 

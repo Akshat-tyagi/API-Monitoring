@@ -13,8 +13,8 @@ model User{
   username String @unique
   email String @unique
   password String 
-  created_At DateTime @default(now())
-  monitor Monitor[]
+  createdAt DateTime @default(now())
+  monitors Monitor[]
 }
 
 model Monitor{
@@ -23,10 +23,40 @@ model Monitor{
   url String
   interval Int
   userId Int
-  user User @relation(fields: [userId],references: [id])
+  user User @relation(fields: [userId],references: [id],onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  checks Check[]
+  incidents Incident[]
 
   @@unique([userId, url])
   @@index([userId])
+}
+
+model Check{
+  id Int @id @default(autoincrement())
+  monitorId Int
+  monitor Monitor @relation(fields: [monitorId],references: [id],onDelete: Cascade)
+  status Status
+  responseTime Int
+  statusCode Int?
+  createdAt DateTime @default(now())
+
+  @@index([monitorId])
+  @@index([createdAt])
+}
+
+model Incident{
+  id  Int @id @default(autoincrement())
+  monitorId Int
+  monitor Monitor @relation(fields: [monitorId],references: [id],onDelete: Cascade)
+  startedAt DateTime @default(now())
+  resolvedAt DateTime? 
+
+  @@index([monitorId])
+}
+
+enum Status{
+  UP
+  DOWN
 }
