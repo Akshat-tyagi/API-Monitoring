@@ -1,0 +1,44 @@
+{
+  "name": "api-monitoring",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "npx tsc",
+    "start": "node ./dist/index.js",
+    "dev": "npx tsc && node ./dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Akshat-tyagi/API-Monitoring.git"
+  },
+  "author": "Akshat-Tyagi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Akshat-tyagi/API-Monitoring/issues"
+  },
+  "homepage": "https://github.com/Akshat-tyagi/API-Monitoring#readme",
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.5.0",
+    "@prisma/client": "^7.5.0",
+    "@types/bcrypt": "^6.0.0",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "bcrypt": "^6.0.0",
+    "bullmq": "^5.72.0",
+    "cookie-parser": "^1.4.7",
+    "express": "^5.2.1",
+    "ioredis": "^5.10.1",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.20.0",
+    "typescript": "^5.9.3",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.10",
+    "@types/node": "^25.5.0",
+    "@types/pg": "^8.18.0",
+    "prisma": "^7.5.0"
+  }
+}
