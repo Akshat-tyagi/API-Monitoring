@@ -10,5 +10,6 @@ router.post("/", monitorController.createmonitor);
 router.get("/", monitorController.getallmonitor);
 router.delete("/:id", monitorController.deletemonitor);
 router.get("/:id/checks",monitorController.getmonitorstats);
+router.get("/:id/incidents",monitorController.getincidents);
 
 export default router;
