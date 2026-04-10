@@ -96,6 +96,49 @@ async function deletemonitor(req:Request, res:Response){
     }
 }
 
+async function getmonitorstats(req:Request,res:Response){
+    try {
+        const id = Number(req.params.id);
+        const userId = req.userId;
+        if(!userId){
+            return res.status(401).json({message:"unauthorised"});
+        }
+        const monitor = await prisma.monitor.findFirst({
+            where:{
+                id,userId
+            }
+        });
+        if(!monitor){
+            return res.status(404).json({message:"monitor not found"});
+        }
+        const checks = await prisma.check.findMany({
+            where:{
+                monitorId:id,
+                createdAt:{
+                    gte:new Date(Date.now()-1000*60*60*24)
+                }
+            }
+        });
+
+        const upCount = checks.filter(c => c.status === 'UP').length;
+        const downCount = checks.filter(c => c.status === 'DOWN').length;
+        const total = upCount + downCount;
+        const uptime = total > 0 ? ((upCount / total) * 100).toFixed(2) : 0;
+        const avgResponseTime = total > 0 ? Math.round(checks.reduce((sum, c) => sum + c.responseTime, 0) / total) : 0;
+
+        return res.status(200).json({
+            uptime: `${uptime}%`,
+            avgResponseTime: `${avgResponseTime}ms`,
+            checksCount: total,
+            upCount,
+            downCount
+        });
+
+    } catch (error) {
+        
+    }
+}
+
 export default {createmonitor,getallmonitor,deletemonitor};
 
 
