@@ -135,10 +135,39 @@ async function getmonitorstats(req:Request,res:Response){
         });
 
     } catch (error) {
-        
+        return res.status(500).json({message:"something went wrong"});
     }
 }
 
-export default {createmonitor,getallmonitor,deletemonitor,getmonitorstats};
+async function getincidents(req:Request,res:Response){
+    try {
+        const id = Number(req.params.id);
+        const userId = req.userId;
+        if(!userId){
+            return res.status(401).json({message:"unauthorised"});
+        }
+        const monitor = await prisma.monitor.findFirst({
+            where:{
+                userId,id
+            }
+        });
+        if(!monitor){
+            return res.status(404).json({message:"monitor not found"});
+        }
+        const incidents = await prisma.incident.findMany({
+            where:{
+                monitorId:id
+            },
+            orderBy:{
+                startedAt:'desc'
+            }
+        })
+        return res.status(200).json({incidents});
+    } catch (error) {
+        return res.status(500).json({message:"something went wrong"});
+    }
+}
+
+export default {createmonitor,getallmonitor,deletemonitor,getmonitorstats,getincidents};
 
 
