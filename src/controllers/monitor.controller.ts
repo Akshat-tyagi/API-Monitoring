@@ -139,6 +139,6 @@ async function getmonitorstats(req:Request,res:Response){
     }
 }
 
-export default {createmonitor,getallmonitor,deletemonitor};
+export default {createmonitor,getallmonitor,deletemonitor,getmonitorstats};
 
 
