@@ -4,9 +4,11 @@ import cookieParser from "cookie-parser";
 import authroutes from "./routes/authroutes.js";
 import monitorRoutes from "./routes/monitor.routes.js";
 import monitorWorker from "./workers/monitor.worker.js";
+import cors from "cors"
 
 const app = express();
 
+app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
 
